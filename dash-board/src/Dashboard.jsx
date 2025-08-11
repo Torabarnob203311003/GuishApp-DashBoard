@@ -1,14 +1,16 @@
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
+import CategoryUploadForm from './components/CategoryUploadForm';
 import { FaPlus } from 'react-icons/fa';
+import { X } from 'lucide-react';
 import { IoIosLink } from 'react-icons/io';
 import { CiShare1 } from 'react-icons/ci';
 // import other icons/components as needed
 
 const Dashboard = () => {
-  const [activeSection, setActiveSection] = useState('content');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [showCategoryForm, setShowCategoryForm] = useState(false);
 
   const categories = ['All', 'Food', 'Education', 'Club', 'News'];
   const videos = [
@@ -33,7 +35,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen w-full bg-gray-50 flex">
-      <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
+  <Sidebar />
       <div className="flex-1 h-screen ">
         {/* Header */}
         <div className="bg-white border-b border-gray-200 px-6 py-7">
@@ -47,100 +49,107 @@ const Dashboard = () => {
           </div>
         </div>
   <div className="p-6 h-full">
-          {activeSection === 'content' && (
-            <>
-              {/* Category Tabs and New Category Button */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex space-x-2">
-                  {categories.map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => setActiveCategory(category)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
-                        activeCategory === category
-                          ? 'bg-[#7D4BAE] text-white border-[#7D4BAE]'
-                          : 'bg-white text-[#7D4BAE] border-[#7D4BAE] hover:bg-[#f3eaff]'
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
-                </div>
-                <button className="flex items-center space-x-2 bg-[#7D4BAE] text-white px-4 py-2 rounded-lg hover:bg-[#6c3e9c] transition-colors border border-[#7D4BAE]">
-                  <FaPlus className="w-4 h-4" />
-                  <span>New Category</span>
-                </button>
-              </div>
-              {/* Video Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {paginatedVideos.map((video) => (
-                  <div key={video.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden relative">
-                    {/* Top corners icons */}
-                    <div className="relative">
-                      <img src={video.thumbnail} alt="Thumbnail" className="w-full h-40 object-cover" />
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">{video.title}</h3>
-                      <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center space-x-1 text-[#7D4BAE] cursor-pointer">
-                          <IoIosLink className="w-5 h-5" />
-                          <span className="text-xs font-medium">Link</span>
-                        </div>
-                        <div className="flex items-center space-x-1 text-[#7D4BAE] cursor-pointer">
-                          <CiShare1 className="w-5 h-5" />
-                          <span className="text-xs font-medium">Share</span>
-                        </div>
-                      </div>
-                      <div className="border-b border-gray-300 my-3" />
-                      <div className="flex items-center space-x-4 mt-2">
-                        <button className="text-gray-500 hover:text-[#7D4BAE]">
-                          <FaRegEdit className="w-5 h-5" />
-                        </button>
-                        <button className="text-gray-500 hover:text-red-500">
-                          <FaRegTrashAlt className="w-5 h-5" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+          {/* Category Tabs and New Category Button */}
+          {!showCategoryForm && (
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex space-x-2">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setActiveCategory(category)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
+                      activeCategory === category
+                        ? 'bg-[#7D4BAE] text-white border-[#7D4BAE]'
+                        : 'bg-white text-[#7D4BAE] border-[#7D4BAE] hover:bg-[#f3eaff]'
+                    }`}
+                  >
+                    {category}
+                  </button>
                 ))}
               </div>
-              {/* Pagination */}
-              <div className="flex items-center justify-center mt-8">
-                <div className="flex items-center rounded-lg space-x-2">
-                  <button
-                    className="px-3 py-1 rounded text-black hover:bg-gray-200 transition-colors"
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                  >&lt;</button>
-                  {Array.from({ length: totalPages }, (_, i) => (
-                    <button
-                      key={i + 1}
-                      className={`px-3 py-1 rounded font-semibold ${
-                        currentPage === i + 1
-                          ? 'text-white bg-[#7D4BAE]'
-                          : 'text-black bg-gray-200 hover:bg-gray-300 transition-colors'
-                      }`}
-                      onClick={() => setCurrentPage(i + 1)}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
-                  <button
-                    className="px-3 py-1 rounded text-black hover:bg-gray-200 transition-colors"
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                  >&gt;</button>
-                </div>
-              </div>
-            </>
-          )}
-          {activeSection === 'categories' && (
-            <div>
-              {/* Categories management UI here */}
-              <h2 className="text-xl font-semibold mb-4">Categories (In Progress)</h2>
-              <div className="text-gray-500">Category management coming soon...</div>
+              <button
+                className="flex items-center space-x-2 bg-[#7D4BAE] text-white px-4 py-2 rounded-lg hover:bg-[#6c3e9c] transition-colors border border-[#7D4BAE]"
+                onClick={() => setShowCategoryForm(true)}
+              >
+                <FaPlus className="w-4 h-4" />
+                <span>New Category</span>
+              </button>
             </div>
           )}
+          {/* Show CategoryUploadForm if requested, else show main content */}
+          {showCategoryForm ? (
+            <div className="relative">
+              <button
+                className="absolute right-0 top-0 z-10 p-2 text-gray-400 hover:text-gray-700"
+                onClick={() => setShowCategoryForm(false)}
+                aria-label="Close"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <CategoryUploadForm />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {paginatedVideos.map((video) => (
+                <div key={video.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden relative">
+                  {/* Top corners icons */}
+                  <div className="relative">
+                    <img src={video.thumbnail} alt="Thumbnail" className="w-full h-40 object-cover" />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-lg font-medium text-gray-900 mb-3">{video.title}</h3>
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex items-center space-x-1 text-[#7D4BAE] cursor-pointer">
+                        <IoIosLink className="w-5 h-5" />
+                        <span className="text-xs font-medium">Link</span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-[#7D4BAE] cursor-pointer">
+                        <CiShare1 className="w-5 h-5" />
+                        <span className="text-xs font-medium">Share</span>
+                      </div>
+                    </div>
+                    <div className="border-b border-gray-300 my-3" />
+                    <div className="flex items-center space-x-4 mt-2">
+                      <button className="text-gray-500 hover:text-[#7D4BAE]">
+                        <FaRegEdit className="w-5 h-5" />
+                      </button>
+                      <button className="text-gray-500 hover:text-red-500">
+                        <FaRegTrashAlt className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          {/* Pagination */}
+          <div className="flex items-center justify-center mt-8">
+            <div className="flex items-center rounded-lg space-x-2">
+              <button
+                className="px-3 py-1 rounded text-black hover:bg-gray-200 transition-colors"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >&lt;</button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  className={`px-3 py-1 rounded font-semibold ${
+                    currentPage === i + 1
+                      ? 'text-white bg-[#7D4BAE]'
+                      : 'text-black bg-gray-200 hover:bg-gray-300 transition-colors'
+                  }`}
+                  onClick={() => setCurrentPage(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                className="px-3 py-1 rounded text-black hover:bg-gray-200 transition-colors"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >&gt;</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
