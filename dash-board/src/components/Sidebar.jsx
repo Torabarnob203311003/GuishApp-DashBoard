@@ -2,6 +2,7 @@ import { CiGrid42 } from 'react-icons/ci';
 import React from 'react';
 import { MdOutlineContentPasteSearch } from 'react-icons/md';
 import { Link, useLocation } from 'react-router-dom';
+import { FiLogOut } from 'react-icons/fi'; // <-- Add this import
 
 
 const Sidebar = () => {
@@ -37,6 +38,13 @@ const Sidebar = () => {
             <span>Categories</span>
           </Link>
         </div>
+      </div>
+      {/* Logout Section */}
+      <div className="p-6 border-t border-gray-100 mt-auto">
+        <button className="flex items-center space-x-2 text-red-500 hover:text-red-600 w-full">
+          <FiLogOut className="w-5 h-5" />
+          <span className="font-medium">Logout</span>
+        </button>
       </div>
     </div>
   );

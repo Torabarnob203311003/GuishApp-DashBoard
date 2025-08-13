@@ -1,5 +1,5 @@
 import { FaRegEdit, FaRegTrashAlt } from 'react-icons/fa';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import CategoryUploadForm from './components/CategoryUploadForm';
 import { FaPlus } from 'react-icons/fa';
@@ -11,6 +11,7 @@ import { CiShare1 } from 'react-icons/ci';
 const Dashboard = () => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [showCategoryForm, setShowCategoryForm] = useState(false);
+  const [moveDropdownId, setMoveDropdownId] = useState(null);
 
   const categories = ['All', 'Food', 'Education', 'Club', 'News'];
   const videos = [
@@ -32,6 +33,27 @@ const Dashboard = () => {
   const itemsPerPage = 8;
   const totalPages = Math.ceil(videos.length / itemsPerPage);
   const paginatedVideos = videos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const moveDropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        moveDropdownRef.current &&
+        !moveDropdownRef.current.contains(event.target)
+      ) {
+        setMoveDropdownId(null);
+      }
+    }
+    if (moveDropdownId !== null) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [moveDropdownId]);
 
   return (
     <div className="min-h-screen w-full bg-gray-50 flex">
@@ -103,9 +125,34 @@ const Dashboard = () => {
                         <IoIosLink className="w-5 h-5" />
                         <span className="text-xs font-medium">Link</span>
                       </div>
-                      <div className="flex items-center space-x-1 text-[#7D4BAE] cursor-pointer">
+                      <div className="flex items-center space-x-1 text-[#7D4BAE] cursor-pointer relative">
                         <CiShare1 className="w-5 h-5" />
-                        <span className="text-xs font-medium">Share</span>
+                        <span
+                          className="text-xs font-medium"
+                          onClick={() => setMoveDropdownId(moveDropdownId === video.id ? null : video.id)}
+                        >
+                          Move
+                        </span>
+                        {moveDropdownId === video.id && (
+                          <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded shadow-lg z-20" ref={moveDropdownRef}>
+                            {categories
+                              .filter((cat) => cat !== video.category && cat !== 'All')
+                              .map((cat) => (
+                                <div
+                                  key={cat}
+                                  className="px-4 py-2 hover:bg-[#f3eaff] cursor-pointer text-[#7D4BAE]"
+                                  onClick={() => {
+                                    // Here you would update the card's category in your state or backend
+                                    // For demo, just close the dropdown
+                                    setMoveDropdownId(null);
+                                    // Optionally: handleMove(video.id, cat);
+                                  }}
+                                >
+                                  {cat}
+                                </div>
+                              ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="border-b border-gray-300 my-3" />
