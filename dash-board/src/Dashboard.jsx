@@ -70,7 +70,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-  <div className="p-6 h-full">
+  <div className="p-6 ">
           {/* Category Tabs and New Category Button */}
           {!showCategoryForm && (
             <div className="flex items-center justify-between mb-6">
